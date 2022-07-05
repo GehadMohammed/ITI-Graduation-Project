@@ -26,14 +26,18 @@ resource "kubernetes_deployment" "Jenkins" {
           port {
             container_port = 8080
           }
+          security_context {
+            run_as_group = 1000
+            run_as_user = 0
+          }
           volume_mount {
             mount_path = "/var/run/docker.sock"
             name = "docker-sock-volume"
           }
-          # volume_mount {
-          #   mount_path = "/var/jenkins_home"
-          #   name = "jenkins-data"
-          # }
+          volume_mount {
+            mount_path = "/var/jenkins_home"
+            name = "jenkins-data"
+          }
         }
         volume {
           name = "docker-sock-volume"
@@ -41,12 +45,12 @@ resource "kubernetes_deployment" "Jenkins" {
             path = "/var/run/docker.sock"
           }
         }
-        # volume {
-        #   name = "jenkins-data"
-        #   persistent_volume_claim {
-        #     claim_name = kubernetes_persistent_volume_claim.jenkins-pvc.metadata.0.name
-        #   }
-        # }
+        volume {
+          name = "jenkins-data"
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.jenkins-pvc.metadata.0.name
+          }
+        }
       }
     }
   }
@@ -91,17 +95,21 @@ resource "kubernetes_deployment" "Nexus" {
           port {
             container_port = 8081
           }
-          # volume_mount {
-          #   mount_path = "/nexus-data"
-          #   name = "nexus-data"
-          # }    
+          security_context {
+            run_as_group = 1000
+            run_as_user = 0
+          }
+          volume_mount {
+            mount_path = "/nexus-data"
+            name = "nexus-data"
+          }    
         }
-        # volume {
-        #   name = "nexus-data"
-        #   persistent_volume_claim {
-        #     claim_name = kubernetes_persistent_volume_claim.nexus-pvc.metadata.0.name
-        #   }
-        # }
+        volume {
+          name = "nexus-data"
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.nexus-pvc.metadata.0.name
+          }
+        }
       }
     }
   }
