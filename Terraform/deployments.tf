@@ -20,9 +20,10 @@ resource "kubernetes_deployment" "Jenkins" {
         }
       }
       spec {
+          service_account_name = kubernetes_service_account_v1.jenkins_sa.metadata.0.name
         container {
           name = "jenkins-master"
-          image  = "nouranhamdy1998/jenkins-master:v1"
+          image  = "amr158/jenkins-master"
           port {
             container_port = 8080
           }
@@ -95,10 +96,6 @@ resource "kubernetes_deployment" "Nexus" {
           port {
             container_port = 8081
           }
-          security_context {
-            run_as_group = 1000
-            run_as_user = 0
-          }
           volume_mount {
             mount_path = "/nexus-data"
             name = "nexus-data"
@@ -106,8 +103,8 @@ resource "kubernetes_deployment" "Nexus" {
         }
         volume {
           name = "nexus-data"
-          persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.nexus-pvc.metadata.0.name
+          empty_dir {
+            
           }
         }
       }

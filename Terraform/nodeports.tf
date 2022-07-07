@@ -33,3 +33,20 @@ resource "kubernetes_service" "nexus-svc" {
     }
   }
 }
+
+resource "kubernetes_service" "repo-svc" {
+  metadata {
+    name      = "repo-svc"
+    namespace = kubernetes_namespace.tools.metadata.0.name
+  }
+  spec {
+    selector = {
+      name = "nexus"
+    }
+    type = "ClusterIP"
+    port {
+      port        = 8082
+      target_port = 8082
+    }
+  }
+}
